@@ -14,34 +14,48 @@ let usuarios = [
 
 //READ
 
-app.get('/', (req,res) => {
-    res.send(`
-        <h1>Lista de usuarios</h1>
-        <ul>
-            ${usuarios.map((usuario)=> `<li> ID: ${usuario.id} | Nombre: ${usuario.nombre} 
-            | Edad: ${usuario.edad} | Lugar de procedencia: ${usuario.lugarProcedencia} 
-            </li>`)}
-        </ul>
-        <form action="/usuarios" method="post"></form>
-         <label for ="nombre">Nombre: </label>
-         <input type="text" id="nombre" name="nombre" required>
+app.get('/usuarios', (req,res) => {
+    res.send(usuarios)
+       
+    
+})
 
-         <label for ="edad">Edad: </label>
-         <input type="text" id="edad" name="edad" required>
-
-         <label for ="lugarProcedencia">Lugar de procedencia: </label>
-         <input type="text" id="lugarProcedencia" name="lugarProcedencia" required>
-
-        <button type="submit">Agregar usuario</button>
-
-        </form>
-        <a href="/usuarios">Usuarios json</a>  
-        `)
+app.get('/usuarios/:nombre', (req,res) => {
+    const nombre = req.params.nombre
+    const find = usuarios.find(usuario => usuario.nombre === nombre)
+    res.send(find)
+       
+    
 })
 
 //CREATE
 
+app.post('/usuarios', (req,res) => {
+    const nuevoUser = { 
+        
+        id: usuarios.length + 1,
+        nombre: req.body.nombre,
+        edad: req.body.edad, 
+        lugarProcedencia: req.body.lugarProcedencia
+    }
 
+    usuarios.push(nuevoUser)
+
+    res.status(200).send('ok')
+})
+
+//DELETE
+
+
+app.delete('/usuarios/:nombre', (req,res) => {
+    const nombre = req.params.nombre
+    const filter = usuarios.filter(usuario => usuario.nombre != nombre)
+    res.send(filter)
+         
+})
+app.use((req,res)=>{
+    res.status(404).send('Page not found')
+})
 
 app.listen(3000, () => {
     console.log('El servidor está escuchando en http://localhost:3000')
